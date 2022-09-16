@@ -1,0 +1,29 @@
+create table tblEmployeeDetails
+(
+UserID int identity Primary key,
+UserName nvarchar(56) not null,
+PassCode nvarchar(66) not null,
+Salary numeric(16,2) not null,
+Email nvarchar(50) not null,
+StateID int not null,
+CityID int not null,
+gender varchar(20) not null,
+type varchar(20) not null
+)
+--alter table tblEmployeeDetails add constraint Df_Type default 'User' for type
+--insert into tblEmployeeDetails(UserName,PassCode,Salary,Email,StateID,CityID,gender,type)values('Prashu','1234',1230222,'Prash111@gmail',1,1,'Male','User')
+--insert into tblState(StateName)values('Maharashtra'),('Madhya Pradesh')
+--insert into tblCity(CityName,StateID)values('Nagpur',1),('Bhopal',2)
+
+create table tblState
+(
+StateID int identity Primary key,
+StateName nvarchar(67) not null,
+)
+
+create table tblCity
+(
+CityID int identity not null,
+CityName nvarchar(55) not null,
+StateID int
+)

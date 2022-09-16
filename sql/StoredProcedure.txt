@@ -1,0 +1,53 @@
+USE [Client_DB]
+GO
+/****** Object:  StoredProcedure [dbo].[SP_EmployeeDetails]    Script Date: 09/15/2022 12:10:34 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER procedure [dbo].[SP_EmployeeDetails]
+(
+@Action nvarchar(25),
+@UserID int=0,
+@UserName nvarchar(30)=null,
+@Salary numeric(16,2)=0,
+@Email nvarchar(50)=null,
+@StateID int=0,
+@CityID int=0,
+@Gender varchar(20)=null,
+@PassCode nvarchar(30)=null
+)
+as 
+BEGIN
+ if @Action='Login'
+	select * from tblEmployeeDetails where UserName=@UserName
+
+ if @Action='GetAllEmp'
+	 select UserID,UserName,Salary,Email,e.passcode,isnull(c.CityName,'')as CityName ,e.Gender,isnull(s.StateName,'') as StateName ,e.CityID,e.StateID,type from 
+	((tblEmployeeDetails E left join tblCity C on E.CityID=C.CityID) left join tblState s on e.StateID=s.StateID) where Type<>'Admin'
+
+ if @Action='GetSpecificEmp'
+	select UserID,UserName,Salary,Email,e.passcode,c.CityName,e.Gender,s.StateName,e.CityID,e.StateID from 
+	((tblEmployeeDetails E left join tblCity C on E.CityID=C.CityID) left join tblState s on e.StateID=s.StateID) where UserID=@UserID
+
+	if @Action='InsertUpdateEmp'
+	if exists(select * from tblEmployeeDetails where UserName=@UserName)
+		Begin
+			Update tblEmployeeDetails set Salary=@Salary,PassCode=@PassCode,Email=@Email,StateID=@StateID,CityID=@CityID,Gender=@Gender  where UserName=@UserName
+		End
+	Else
+		Begin
+			insert into tblEmployeeDetails(UserName,PassCode,Salary,Email,StateID,CityID,Gender) values(@UserName,@PassCode,@Salary,@Email,@StateID,@CityID,@Gender)
+		End
+
+ if @Action='GetState'
+	select * from tblState
+
+if @Action='GetCity'
+	select * from tblCity where StateID=@StateID
+
+	if @Action='DeleteData'
+	delete from tblEmployeeDetails where UserID=@UserID
+END
+
+
